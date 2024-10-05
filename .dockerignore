@@ -1,0 +1,44 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# Docker image
+Dockerfile
+*.dockerignore
+
+# Git files
+.git/
+.gitignore
+
+# Logs and local files
+*.log
+*.md
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Pytest cache
+.pytest_cache/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Local environment variables
+.env
+
+# Ignore databases and static files that are locally generated
+*.db
+*.sqlite3
+staticfiles/
+mediafiles/
