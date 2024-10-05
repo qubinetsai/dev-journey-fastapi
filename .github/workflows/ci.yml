@@ -1,0 +1,87 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  build_docker_image:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 1
+      DOCKER_DRIVER: overlay2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Show Docker info
+        run: docker info
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get build name
+        id: get_build_name
+        run: |
+          BUILD_NAME=$(git describe --tags || echo ${{ github.run_number }})
+          echo "BUILD_NAME=$BUILD_NAME" >> $GITHUB_ENV
+          echo "Build name: $BUILD_NAME"
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}:${{ env.BUILD_NAME }} \
+                        -t ghcr.io/${{ github.repository }}:latest \
+                        --build-arg BUILDKIT_INLINE_CACHE=1 \
+                        --cache-from ghcr.io/${{ github.repository }} .
+          docker push ghcr.io/${{ github.repository }} --all-tags
+
+  build_helm_chart:
+    name: Build Helm Chart
+    runs-on: ubuntu-latest
+    needs: build_docker_image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+
+      - name: Helm version
+        run: helm version
+
+      - name: Get build name
+        run: |
+          BUILD_NAME=$(git describe --tags || echo ${{ github.run_number }})
+          echo "BUILD_NAME=$BUILD_NAME" >> $GITHUB_ENV
+          echo "Build name: $BUILD_NAME"
+
+      - name: Run Chart Releaser
+        uses: helm/chart-releaser-action@v1.4.0
+        env:
+          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CR_OWNER: ${{ github.repository_owner }}
+          CR_GIT_REPO: ${{ github.event.repository.name }}
+          CR_CHARTS_REPO: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+          CR_COMMIT: "true"
+          CR_COMMIT_AUTHOR: ${{ github.actor }}
+          CR_COMMIT_EMAIL: noreply@github.com
+          CR_PACKAGE_PATH: .cr-release-packages
+          CR_INDEX_PATH: .cr-index
+          CR_PAGES_BRANCH: gh-pages
+        with:
+          version: ${{ env.BUILD_NAME }}
+          charts_dir: charts
+          charts_repo_url: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
