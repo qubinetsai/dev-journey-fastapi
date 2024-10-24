@@ -67,6 +67,11 @@ jobs:
       - name: Helm version
         run: helm version
 
+      - name: Package Helm Charts
+        run: |
+          mkdir -p .cr-release-packages
+          helm package charts/dev-journey-fastapi --destination .cr-release-packages
+
       - name: Get build name
         run: |
           BUILD_NAME=$(git describe --tags || echo ${{ github.run_number }})
@@ -85,5 +90,3 @@ jobs:
         with:
           version: ${{ env.BUILD_NAME }}
           charts_dir: charts
-          cr_skip_existing: true
-          cr_make_release_latest: true
