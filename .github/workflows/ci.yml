@@ -10,6 +10,7 @@ on:
 permissions:
   contents: write
   packages: write
+  pages: write
   id-token: write
 
 jobs:
@@ -84,3 +85,5 @@ jobs:
         with:
           version: ${{ env.BUILD_NAME }}
           charts_dir: charts
+          cr_skip_existing: true
+          cr_make_release_latest: true
