@@ -1,6 +1,6 @@
-keycloak:
+dev-journey-fastapi:
   qubeKey: dev-journey-fastapi
-  name: DEV Journey FastAPI
+  name: dev-journey-fastapi
   version: v1.0.0
   chart: dev-journey-fastapi
   repo: https://github.com/qubinetsai/dev-journey-fastapi/releases/download
