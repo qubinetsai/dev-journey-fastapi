@@ -11,14 +11,4 @@ entries:
     urls:
     - https://github.com/qubinetsai/dev-journey-fastapi/releases/download/dev-journey-fastapi-1.0.0/dev-journey-fastapi-1.0.0.tgz
     version: 1.0.0
-  - apiVersion: v2
-    appVersion: 1.0.0
-    created: "2024-10-25T09:48:30.425961115Z"
-    description: A Helm chart for deploying FastAPI application
-    digest: b75298a6b70365c5c1bb07fadf04b3160266072b11fa6985b93c9b20a25fa0d4
-    name: dev-journey-fastapi
-    type: application
-    urls:
-    - https://github.com/qubinetsai/dev-journey-fastapi/releases/download/dev-journey-fastapi-0.1.0/dev-journey-fastapi-0.1.0.tgz
-    version: 0.1.0
 generated: "2024-10-25T09:52:05.040501365Z"
