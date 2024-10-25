@@ -93,27 +93,24 @@ jobs:
           echo "BUILD_NAME=$BUILD_NAME" >> $GITHUB_ENV
           echo "Build name: $BUILD_NAME"
 
-      - name: Package and Release Charts
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        run: |
-          # Create temporary directories
-          mkdir -p .cr-release-packages
-          mkdir -p .cr-index
-          
-          # Package chart
-          helm package charts/dev-journey-fastapi --destination .cr-release-packages/
-          
-          # Upload chart
-          cr upload --owner ${{ github.repository_owner }} --git-repo ${{ github.event.repository.name }} --package-path .cr-release-packages
-          
-          # Update index
-          cr index --owner ${{ github.repository_owner }} --git-repo ${{ github.event.repository.name }} --pages-branch gh-pages --push
-
-      #- name: Run Chart Releaser
-      #  uses: helm/chart-releaser-action@v1.5.0
+      #- name: Package and Release Charts
       #  env:
-      #    CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #  with:
-      #    version: ${{ env.BUILD_NAME }}
-      #    charts_dir: charts
+      #    CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      #  run: |
+      #    # Create temporary directories
+      #    mkdir -p .cr-release-packages
+      #    mkdir -p .cr-index
+      #
+      #    # Package chart
+      #    helm package charts/dev-journey-fastapi --destination .cr-release-packages/
+          
+      #    # Upload chart
+      #    cr upload --owner ${{ github.repository_owner }} --git-repo ${{ github.event.repository.name }} --package-path .cr-release-packages
+      #
+      #    # Update index
+      #    cr index --owner ${{ github.repository_owner }} --git-repo ${{ github.event.repository.name }} --pages-branch gh-pages --push
+
+      - name: Run Chart Releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        env:
+          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
